@@ -23,6 +23,12 @@ public class Main {
             throw new IllegalStateException("Cannot reach database!", sqle);
         }
 
+        ActorsRepository actorsRepository = new ActorsRepository(dataSource);
+        actorsRepository.saveActor("Jack Doe");
+
+        System.out.println(actorsRepository.findActorsWithPrefix("Jo"));
+
+/*
         try (Connection connection = dataSource.getConnection()){
             Statement stmt = connection.createStatement();
             stmt.executeUpdate("insert into actors(actor_name) values('John Doe')");
@@ -30,6 +36,8 @@ public class Main {
         catch (SQLException sqle){
             throw new IllegalStateException("Cannot connect!", sqle);
         }
+
+ */
 
     }
 
