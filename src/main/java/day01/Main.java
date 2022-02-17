@@ -4,11 +4,13 @@
 
 package day01;
 
+import org.flywaydb.core.Flyway;
 import org.mariadb.jdbc.MariaDbDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 
 public class Main {
 
@@ -18,15 +20,25 @@ public class Main {
             dataSource.setUrl("jdbc:mariadb://localhost:3306/movies-actors?useUnicode=true");
             dataSource.setUser("root");
             dataSource.setPassword("root");
-        }
-        catch (SQLException sqle) {
+        } catch (SQLException sqle) {
             throw new IllegalStateException("Cannot reach database!", sqle);
         }
 
-        ActorsRepository actorsRepository = new ActorsRepository(dataSource);
-        actorsRepository.saveActor("Jack Doe");
+        Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+        flyway.migrate();
 
-        System.out.println(actorsRepository.findActorsWithPrefix("Jo"));
+        ActorsRepository actorsRepository = new ActorsRepository(dataSource);
+
+        MoviesRepository moviesRepository = new MoviesRepository(dataSource);
+
+        moviesRepository.saveMovie("Titanic", LocalDate.of(1997, 12, 11));
+
+        /* // teszthez:
+        actorsRepository.saveActor("John Doe");
+
+        System.out.println(actorsRepository.findActorsWithPrefix("j"));
+
+         */
 
 /*
         try (Connection connection = dataSource.getConnection()){
