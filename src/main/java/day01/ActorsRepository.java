@@ -1,12 +1,10 @@
 package day01;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ActorsRepository {
 
@@ -20,33 +18,61 @@ public class ActorsRepository {
     public void saveActor(String name) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement stmt =
-                     connection.prepareStatement("insert into actors(actor_name) values(?)")) {
+                     connection.prepareStatement("insert into actors(actor_name) values(?)",
+                             Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, name);
             stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+                throw new IllegalStateException("Cannot insert and get ID!");
+            }
+
+
         } catch (SQLException sqle) {
             throw new IllegalStateException("Cannot update: " + name, sqle);
         }
     }
 
-    public List<String> findActorsWithPrefix(String prefix){
-        List<String> result = new ArrayList<>();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement stmt =
-                    connection.prepareStatement("SELECT actor_name FROM actors WHERE actor_name LIKE ?")
-                ) {
-            stmt.setString(1, prefix+"%");
+    public Optional<Actor> findActorByName(String name) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement statement =
+                     conn.prepareStatement("select * from actors where actor_name=?")) {
+            statement.setString(1, name);
+            return processSelectStatement(statement);
+        } catch (SQLException sqle) {
+            throw new IllegalStateException("Cannot connect fo select by name!");
+        }
+    }
 
-            try(ResultSet rs = stmt.executeQuery()){
-                while (rs.next()){
+
+    private Optional<Actor> processSelectStatement(PreparedStatement statement) throws SQLException {
+        try (ResultSet rs = statement.executeQuery()) {
+            if (rs.next()) {
+                return Optional.of(new Actor(rs.getLong("id"), rs.getString("actor_name")));
+            }
+            return Optional.empty();
+        }
+    }
+
+
+    public List<String> findActorsWithPrefix(String prefix) {
+        List<String> result = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement stmt =
+                     connection.prepareStatement("SELECT actor_name FROM actors WHERE actor_name LIKE ?")
+        ) {
+            stmt.setString(1, prefix + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
                     String actorName = rs.getString("actor_name");
                     result.add(actorName);
                 }
             }
-        }
-
-
-
-        catch (SQLException sqle) {
+        } catch (SQLException sqle) {
             throw new IllegalStateException("Cannot query!", sqle);
         }
         return result;
