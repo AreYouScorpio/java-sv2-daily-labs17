@@ -26,4 +26,13 @@ public class Movie {
     public LocalDate getLocalDate() {
         return localDate;
     }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", localDate=" + localDate +
+                '}';
+    }
 }
