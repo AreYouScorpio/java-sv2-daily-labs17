@@ -15,7 +15,7 @@ public class ActorsRepository {
     }
 
 
-    public void saveActor(String name) {
+    public long saveActor(String name) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement stmt =
                      connection.prepareStatement("insert into actors(actor_name) values(?)",
