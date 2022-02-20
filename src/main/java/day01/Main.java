@@ -42,10 +42,15 @@ public class Main {
 
         ActorsMoviesRepository actorsMoviesRepository = new ActorsMoviesRepository(dataSource);
 
-        ActorsMoviesService service = new ActorsMoviesService(actorsRepository, moviesRepository, actorsMoviesRepository);
+        RatingsRepository ratingsRepository = new RatingsRepository(dataSource);
 
-        service.insertMovieWithActors("Titanic", LocalDate.of(1997, 11, 13), List.of("Leonardo DiCaprio", "Kate Winslet"));
-        service.insertMovieWithActors("Great Gatsby", LocalDate.of(2012, 12, 11), List.of("Leonardo DiCaprio", "Toby"));
+
+        ActorsMoviesService actorsMoviesService = new ActorsMoviesService(actorsRepository, moviesRepository, actorsMoviesRepository);
+
+        MoviesRatingService moviesRatingService = new MoviesRatingService(moviesRepository, ratingsRepository);
+
+        actorsMoviesService.insertMovieWithActors("Titanic", LocalDate.of(1997, 11, 13), List.of("Leonardo DiCaprio", "Kate Winslet"));
+        actorsMoviesService.insertMovieWithActors("Great Gatsby", LocalDate.of(2012, 12, 11), List.of("Leonardo DiCaprio", "Toby"));
 
         // 4.nap off
         // System.out.println(moviesRepository.findAllMovies());
@@ -67,7 +72,8 @@ public class Main {
         }
 
  */
-
+//5.nap
+        moviesRatingService.addRatings("Titanic", 5, 3, 2);
     }
 
 }
