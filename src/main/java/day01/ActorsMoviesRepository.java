@@ -13,11 +13,11 @@ public class ActorsMoviesRepository {
         this.dataSource = dataSource;
     }
 
-    public void insertActorAndMovieId(long actor_id, long movie_id){
+    public void insertActorAndMovieId(long actorId, long movieId){
         try(Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement("insert into actors_movies(actor_id,movie_id) values(?,?)")){
-        stmt.setLong(1, actor_id);
-        stmt.setLong(2, movie_id);
+        stmt.setLong(1, actorId);
+        stmt.setLong(2, movieId);
         stmt.executeUpdate();
         }catch (SQLException sqle){
             throw new IllegalStateException("Cannot insert row to actors-movies!");
