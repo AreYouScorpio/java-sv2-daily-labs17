@@ -15,7 +15,7 @@ public class ActorsMoviesRepository {
 
     public void insertActorAndMovieId(long actor_id, long movie_id){
         try(Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement("insert into actors_movies(actor_id, movie_id), values(?,?)")){
+            PreparedStatement stmt = conn.prepareStatement("insert into actors_movies(actor_id,movie_id) values(?,?)")){
         stmt.setLong(1, actor_id);
         stmt.setLong(2, movie_id);
         stmt.executeUpdate();

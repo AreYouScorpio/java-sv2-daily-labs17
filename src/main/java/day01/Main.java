@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.List;
 
 public class Main {
 
@@ -25,16 +26,27 @@ public class Main {
         }
 
         Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+        flyway.clean();
         flyway.migrate();
 
         ActorsRepository actorsRepository = new ActorsRepository(dataSource);
 
         MoviesRepository moviesRepository = new MoviesRepository(dataSource);
 
-        moviesRepository.saveMovie("Titanic", LocalDate.of(1997, 12, 11));
-        moviesRepository.saveMovie("LOR", LocalDate.of(2000, 12, 23));
+        // //4.nap off
+        // moviesRepository.saveMovie("Titanic", LocalDate.of(1997, 12, 11));
+        // moviesRepository.saveMovie("LOR", LocalDate.of(2000, 12, 23));
 
-        System.out.println(moviesRepository.findAllMovies());
+        //4.nap:
+
+        ActorsMoviesRepository actorsMoviesRepository = new ActorsMoviesRepository(dataSource);
+
+        ActorsMoviesService service = new ActorsMoviesService(actorsRepository, moviesRepository, actorsMoviesRepository);
+
+        service.insertMovieWithActors("Titanic", LocalDate.of(1997, 11, 13), List.of("Leonardo DiCaprio", "Kate Winslet"));
+
+        // 4.nap off
+        // System.out.println(moviesRepository.findAllMovies());
 
         /* // teszthez:
         actorsRepository.saveActor("John Doe");

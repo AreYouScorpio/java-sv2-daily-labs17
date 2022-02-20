@@ -17,16 +17,16 @@ public class ActorsMoviesService {
     }
 
     public void insertMovieWithActors(String title, LocalDate releasedDate, List<String> actorNames) {
-        long movie_id = moviesRepository.saveMovie(title, releasedDate);
+        long movieId = moviesRepository.saveMovie(title, releasedDate);
         for (String actual : actorNames) {
-            long actor_id;
+            long actorId;
             Optional<Actor> found = actorsRepository.findActorByName(actual);
             if (found.isPresent()) {
-                actor_id = found.get().getId();
+                actorId = found.get().getId();
             } else {
-                actor_id = actorsRepository.saveActor(actual);
+                actorId = actorsRepository.saveActor(actual);
             }
-            actorsMoviesRepository.insertActorAndMovieId(actor_id, movie_id);
+            actorsMoviesRepository.insertActorAndMovieId(actorId, movieId);
         }
     }
 }
