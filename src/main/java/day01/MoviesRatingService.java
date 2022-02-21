@@ -18,11 +18,18 @@ public class MoviesRatingService {
     public void addRatings(String title, Integer... ratings){
         Optional<Movie> actual = moviesRepository.findMovieByTitle(title);
         if(actual.isPresent()){
-            Arrays.asList(ratings);
+            //Arrays.asList(ratings);
             ratingsRepository.insertRating(actual.get().getId(), Arrays.asList(ratings));
+            updateAvgRatingByTitle(title);
         }
         else {
             throw new IllegalArgumentException("Cannot find movie: " + title);
         }
+    }
+
+    //last week 1.day
+    public void updateAvgRatingByTitle(String title){
+        double avg = moviesRepository.getMovieAvgRating(title);
+        moviesRepository.updateMovieAvgRating(title, avg);
     }
 }

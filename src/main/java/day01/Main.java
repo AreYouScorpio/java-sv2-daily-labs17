@@ -27,7 +27,7 @@ public class Main {
 
         Flyway flyway = Flyway.configure().dataSource(dataSource).load();
         // tesztelés előtt
-        // flyway.clean();
+        flyway.clean();
         flyway.migrate();
 
         ActorsRepository actorsRepository = new ActorsRepository(dataSource);
@@ -35,8 +35,8 @@ public class Main {
         MoviesRepository moviesRepository = new MoviesRepository(dataSource);
 
         // //4.nap off
-        // moviesRepository.saveMovie("Titanic", LocalDate.of(1997, 12, 11));
-        // moviesRepository.saveMovie("LOR", LocalDate.of(2000, 12, 23));
+        moviesRepository.saveMovie("Titanic", LocalDate.of(1997, 12, 11));
+        moviesRepository.saveMovie("LOR", LocalDate.of(2000, 12, 23));
 
         //4.nap:
 
@@ -49,8 +49,8 @@ public class Main {
 
         MoviesRatingService moviesRatingService = new MoviesRatingService(moviesRepository, ratingsRepository);
 
-        // actorsMoviesService.insertMovieWithActors("Titanic", LocalDate.of(1997, 11, 13), List.of("Leonardo DiCaprio", "Kate Winslet"));
-        // actorsMoviesService.insertMovieWithActors("Great Gatsby", LocalDate.of(2012, 12, 11), List.of("Leonardo DiCaprio", "Toby"));
+        actorsMoviesService.insertMovieWithActors("Titanic", LocalDate.of(1997, 11, 13), List.of("Leonardo DiCaprio", "Kate Winslet"));
+        actorsMoviesService.insertMovieWithActors("Great Gatsby", LocalDate.of(2012, 12, 11), List.of("Leonardo DiCaprio", "Toby"));
 
         //
         // 4.nap off
@@ -78,6 +78,12 @@ public class Main {
         moviesRatingService.addRatings("Great Gatsby", 1,3,2,5); // így bekerül
         moviesRatingService.addRatings("Great Gatsby", 1,3,6,5); // így nem kerül be 6>5
 
+        moviesRatingService.addRatings("Titanic", 5,5,5,5,5,5,5,5,5);
+        moviesRatingService.addRatings("Titanic", 1,3,2,5);
+
+        actorsMoviesService.insertMovieWithActors("Star Wars", LocalDate.of(1977, 05,25), List.of("Mark Hamill", "Harrison Ford", "Carrie Fisher"));
+
+        moviesRatingService.addRatings("Star Wars", 5,5);
     }
 
 }

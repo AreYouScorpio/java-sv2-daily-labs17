@@ -1,5 +1,7 @@
 package day01;
 
+import org.mariadb.jdbc.client.result.Result;
+
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDate;
@@ -88,6 +90,37 @@ public class MoviesRepository {
             throw new IllegalStateException("Cannot connect to movies", sqle);
         }
 
+    }
+
+    public double getMovieAvgRating(String title) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "select avg(rating) as calculated_avg from ratings join movies on movies.id=ratings.movie_id where movies.title=?")) {
+            stmt.setString(1, title);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("calculated_avg");
+                }
+                throw new IllegalArgumentException("Cannot find movie!");
+            }
+        } catch (SQLException sqle) {
+            throw new IllegalStateException("Cannot quiery", sqle);
+        }
+        //return 0;
+    }
+
+    public void updateMovieAvgRating(String title, double avg) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "UPDATE movies SET avg_rating=? where title=?")) {
+
+            stmt.setDouble(1,avg);
+            stmt.setString(2,title);
+            stmt.executeUpdate();
+
+        } catch (SQLException sqle) {
+            throw new IllegalStateException("Cannot update!", sqle);
+        }
     }
 
 }
